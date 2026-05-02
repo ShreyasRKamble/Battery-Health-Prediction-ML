@@ -1,0 +1,280 @@
+
+Shreyas Kamble <shreyas30k@gmail.com>
+22:04 (0 minutes ago)
+to shreyas.kamble1
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battery AI | Horizontal Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0e14;
+      --card: #141820;
+      --input: #1c212c;
+      --border: rgba(255, 255, 255, 0.08);
+      --text-main: #e2e8f0;
+      --text-dim: #94a3b8;
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at 20% 20%, #1e293b 0%, transparent 40%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* Horizontal Container */
+    .dashboard {
+      display: flex;
+      width: 100%;
+      max-width: 1000px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Left Side: Input Form */
+    .input-panel {
+      flex: 1.2;
+      padding: 2.5rem;
+      border-right: 1px solid var(--border);
+    }
+
+    /* Right Side: Results */
+    .output-panel {
+      flex: 1;
+      padding: 2.5rem;
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .panel-header { margin-bottom: 2rem; }
+    .panel-header h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.03em; }
+    .panel-header p { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-top: 4px; }
+
+    .group-title {
+      font-family: 'JetBrains Mono';
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin: 1.5rem 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .group-title::after { content: ""; height: 1px; flex-grow: 1; background: var(--border); }
+
+    .grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    
+    label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+    
+    input, select {
+      width: 100%;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 0.8rem;
+      color: white;
+      font-family: 'JetBrains Mono';
+      font-size: 0.85rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+    .predict-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #061c14;
+      font-weight: 600;
+      padding: 0.9rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: 0.3s;
+    }
+    .predict-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+    /* Result Elements */
+    .placeholder-text { color: var(--text-dim); font-size: 0.9rem; font-style: italic; }
+    
+    .health-value { font-family: 'JetBrains Mono'; font-size: 4.5rem; font-weight: 600; line-height: 1; margin-bottom: 0.5rem; }
+    
+    .status-badge {
+      padding: 0.3rem 1.2rem;
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--input);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .progress-fill { height: 100%; width: 0%; transition: width 1s cubic-bezier(0.19, 1, 0.22, 1); }
+
+    .advice-box { font-size: 0.85rem; line-height: 1.6; color: var(--text-dim); padding: 0 1rem; }
+
+    /* Color States */
+    .good { color: var(--accent); } .good-bg { background: var(--accent); } .good-badge { background: rgba(16, 185, 129, 0.1); color: var(--accent); }
+    .warn { color: var(--warning); } .warn-bg { background: var(--warning); } .warn-badge { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+    .bad { color: var(--danger); } .bad-bg { background: var(--danger); } .bad-badge { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+    @media (max-width: 850px) {
+      .dashboard { flex-direction: column; }
+      .input-panel { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="dashboard">
+  <!-- Left Side -->
+  <section class="input-panel">
+    <header class="panel-header">
+      <h1>Battery Diagnostics</h1>
+      <p>Input usage parameters for AI analysis</p>
+    </header>
+
+    <form id="batteryForm">
+      <div class="group-title">Hardware</div>
+      <div class="grid-row">
+        <div class="field">
+          <label>Age (Months)</label>
+          <input type="number" id="device_age_months" placeholder="24" required>
+        </div>
+        <div class="field">
+          <label>Cycles/Week</label>
+          <input type="number" id="avg_charging_cycles_per_week" step="0.1" placeholder="7">
+        </div>
+      </div>
+
+      <div class="group-title">Charging Habits</div>
+      <div class="grid-row">
+        <div class="field">
+          <label>Fast Charge %</label>
+          <input type="number" id="fast_charging_usage_percent" placeholder="40">
+        </div>
+        <div class="field">
+          <label>Overnight Freq</label>
+          <input type="number" id="overnight_charging_freq_per_week" step="0.1" max="7" placeholder="5">
+        </div>
+      </div>
+
+      <div class="group-title">Lifestyle</div>
+      <div class="grid-row">
+        <div class="field">
+          <label>Gaming (Hrs/Wk)</label>
+          <input type="number" id="gaming_hours_per_week" step="0.1" placeholder="3">
+        </div>
+        <div class="field">
+          <label>Streaming (Hrs/Wk)</label>
+          <input type="number" id="video_streaming_hours_per_week" step="0.1" placeholder="12">
+        </div>
+      </div>
+      <div class="field">
+        <label>Background App Usage</label>
+        <select id="background_app_usage_level_encoded">
+          <option value="0">Optimized</option>
+          <option value="1">Balanced</option>
+          <option value="2">Intensive</option>
+        </select>
+      </div>
+
+      <button type="submit" class="predict-btn">Run AI Prediction</button>
+    </form>
+  </section>
+
+  <!-- Right Side -->
+  <section class="output-panel" id="outputPanel">
+    <div id="placeholder" class="placeholder-text">
+      Enter data and click "Run" to see results.
+    </div>
+    
+    <div id="results" style="display: none; width: 100%;">
+      <div id="healthValue" class="health-display health-value">--%</div>
+      <div id="statusBadge" class="status-badge">Calculating</div>
+      <div class="progress-bar">
+        <div id="progressBar" class="progress-fill"></div>
+      </div>
+      <p id="advice" class="advice-box"></p>
+    </div>
+  </section>
+</div>
+
+<script>
+  const model = {
+    intercept: 62.635730575880714,
+    coefs: { device_age_months: -14.721298138627994, avg_charging_cycles_per_week: -6.820725049496239, fast_charging_usage_percent: -0.5076077068265759, overnight_charging_freq_per_week: -1.4273878091815533, gaming_hours_per_week: -0.7470628187344184, video_streaming_hours_per_week: 0.07700537407572838, background_app_usage_level_encoded: 0.02280971520947217 },
+    mean: { device_age_months: 24.172549019607843, avg_charging_cycles_per_week: 8.296813725490196, fast_charging_usage_percent: 50.70566176470589, overnight_charging_freq_per_week: 3.471813725490196, gaming_hours_per_week: 3.9339215686274507, video_streaming_hours_per_week: 9.979411764705882, background_app_usage_level_encoded: 0.9769607843137255 },
+    std: { device_age_months: 13.746537224310774, avg_charging_cycles_per_week: 2.8684857391819194, fast_charging_usage_percent: 22.01432276200907, overnight_charging_freq_per_week: 2.288545570454498, gaming_hours_per_week: 2.748732562424157, video_streaming_hours_per_week: 4.950615197169926, background_app_usage_level_encoded: 0.8131628990693772 }
+  };
+
+  document.getElementById('batteryForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let pred = model.intercept;
+    for (const key in model.coefs) {
+      const val = parseFloat(document.getElementById(key).value) || 0;
+      pred += ((val - model.mean[key]) / model.std[key]) * model.coefs[key];
+    }
+    const score = Math.min(Math.max(pred, 0), 100);
+    
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+    
+    const hVal = document.getElementById('healthValue');
+    const badge = document.getElementById('statusBadge');
+    const bar = document.getElementById('progressBar');
+    const adv = document.getElementById('advice');
+
+    hVal.innerText = score.toFixed(1) + '%';
+    hVal.className = 'health-value';
+    badge.className = 'status-badge';
+    bar.className = 'progress-fill';
+
+    if (score > 80) {
+      hVal.classList.add('good'); badge.classList.add('good-badge'); bar.classList.add('good-bg');
+      badge.innerText = 'Excellent'; adv.innerText = 'Health is optimal. Your charging profile is ideal.';
+    } else if (score > 60) {
+      hVal.classList.add('warn'); badge.classList.add('warn-badge'); bar.classList.add('warn-bg');
+      badge.innerText = 'Fair'; adv.innerText = 'Standard wear detected. Try reducing fast charging usage.';
+    } else {
+      hVal.classList.add('bad'); badge.classList.add('bad-badge'); bar.classList.add('bad-bg');
+      badge.innerText = 'Poor'; adv.innerText = 'Significant degradation. Battery replacement recommended.';
+    }
+
+    setTimeout(() => { bar.style.width = score + '%'; }, 50);
+  });
+</script>
+</body>
+</html>
