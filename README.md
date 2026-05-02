@@ -126,28 +126,6 @@ Based on predicted battery health:
 
 ---
 
-## 🚀 How to Run
-
-1. Clone the repository
-
-```bash
-git clone https://github.com/your-username/repo-name.git
-```
-
-2. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-3. Run the script
-
-```bash
-python battery_health_prediction.py
-```
-
----
-
 ## ⚠️ Challenges & Limitations
 
 * Data leakage initially identified and fixed
@@ -172,11 +150,5 @@ Electronics Engineering Student | Embedded Systems +  VLSI Enthusiast
 
 ---
 
-## ⭐ Future Improvements
-
-* Deploy as a web dashboard (Streamlit)
-* Integrate real-time mobile data
-* Add deep learning models
-* Improve dataset diversity
 
 ---
